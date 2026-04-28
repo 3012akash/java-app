@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = " aakashg1230/java-app"
+        DOCKER_IMAGE = "aakashg1230/java-app"
     }
 
     stages {
@@ -54,7 +54,11 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh 'echo "Deploying to production..."'
+                sh '''
+                docker stop java-app-container || true
+                docker rm java-app-container || true
+                docker run -d --name java-app-container -p 8081:8080 $DOCKER_IMAGE:$BUILD_NUMBER
+                '''
             }
         }
     }
